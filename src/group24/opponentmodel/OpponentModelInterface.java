@@ -47,4 +47,10 @@ public interface OpponentModelInterface {
      * @return
      */
     double predict(Bid bid, OpponentModel opponent);
+
+    double predict(Bid bid);
+
+    double calculateNash(Bid bid);
+
+    double calculateDistanceNash(Bid o1, Bid finalNash);
 }

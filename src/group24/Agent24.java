@@ -88,8 +88,8 @@ public class Agent24 extends CourseworkNegotiationParty {
                 }
 
                 // reluctance decrease 4% every ten rounds
-                Reluctance = Reluctance * (1 - 0.04);
-                if (timeline.getTime() < 0.65 && Reluctance < 0.9) {
+                Reluctance = Reluctance * (1 - 0.06);
+                if (timeline.getTime() < 7 && Reluctance < 0.9) {
                     Reluctance = 0.9;
                 }
 
@@ -101,8 +101,12 @@ public class Agent24 extends CourseworkNegotiationParty {
                 Collections.sort(commonBidsList);
                 // AV = Utility(BidBest) * Reluctance
                 Agreement_Value = (commonBidsList.get(commonBidsList.size() - 1).getMyUndiscountedUtil()) * Reluctance;
-                if (Agreement_Value > 0.8) {
-                    Agreement_Value = 0.8;
+                if (Agreement_Value > 0.85) {
+                    Agreement_Value = 0.85;
+                }
+
+                if (Agreement_Value < Minimum_Offer_Threshold * (2 - timeline.getTime())) {
+                    Agreement_Value = Minimum_Offer_Threshold * (2 - timeline.getTime());
                 }
             }
         }

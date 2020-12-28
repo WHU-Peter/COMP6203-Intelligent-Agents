@@ -399,6 +399,12 @@
             <partyRepItem classPath="/Users/panfei/Downloads/genius-9.1.11/genius-9.1.11/agents/anac/y2019/agentgg/AgentGG.class" strategyParameters="">
                 <properties/>
             </partyRepItem>
+            <partyRepItem classPath="/Users/panfei/Downloads/genius-9.1.11/genius-9.1.11/agents/anac/y2019/winkyagent/winkyAgent.class" strategyParameters="">
+                <properties/>
+            </partyRepItem>
+            <partyRepItem classPath="/Users/panfei/Downloads/genius-9.1.11/genius-9.1.11/agents/anac/y2019/fsega2019/agent/FSEGA2019.class" strategyParameters="">
+                <properties/>
+            </partyRepItem>
         </partyRepItems>
         <domainRepItem/>
         <protocolRepItem/>

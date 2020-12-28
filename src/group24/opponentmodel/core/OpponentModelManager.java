@@ -27,6 +27,38 @@ public class OpponentModelManager implements OpponentModelInterface {
     }
 
     @Override
+    public double predict(Bid bid) {
+        double minPredict = 0;
+        for (OpponentModel opponentModel : this.opponentMap.values()) {
+            double predict = opponentModel.predict(bid);
+            if (minPredict == 0 || predict < minPredict) {
+                minPredict = predict;
+            }
+        }
+        return minPredict;
+    }
+
+    @Override
+    public double calculateNash(Bid bid) {
+        double nash = 1;
+        for (OpponentModel opponentModel : this.opponentMap.values()) {
+            nash = nash * opponentModel.predict(bid);
+        }
+
+        return nash;
+    }
+
+    @Override
+    public double calculateDistanceNash(Bid bid, Bid finalNash) {
+        double distance = 0;
+        for (OpponentModel opponentModel : this.opponentMap.values()) {
+            distance = distance + Math.pow(opponentModel.predict(bid) - opponentModel.predict(finalNash), 2);
+        }
+
+        return distance;
+    }
+
+    @Override
     public Set<BidDetails> queryCommonBestBidsSet(List<BidDetails> allBids, int number_of_bids) {
 
         if (null == this.opponentMap) {

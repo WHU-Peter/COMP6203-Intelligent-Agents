@@ -12,6 +12,7 @@ import group24.offering.OfferingStrategy;
 import group24.opponentmodel.OpponentModelInterface;
 import group24.usermodel.UserModelInterface;
 import java.util.List;
+import java.util.Random;
 
 /**
  * base class of negotiation party for Coursework
@@ -24,7 +25,7 @@ public abstract class CourseworkNegotiationParty extends AbstractNegotiationPart
     protected double Agreement_Value = 0.8;
     protected double Care_Value = 0.4;
     protected int Number_of_Bids = 5;
-    protected double Reluctance = 1.1;
+    protected double Reluctance = 3.0;
 
     protected Bid lastOffer;
     protected List<BidDetails> feasibleBids;
@@ -74,5 +75,9 @@ public abstract class CourseworkNegotiationParty extends AbstractNegotiationPart
 
     public UncertainAdditiveUtilitySpace getRealUSpace() {
         return userModelInterface.queryRealUtilitySpace();
+    }
+
+    public Random getRandom() {
+        return rand;
     }
 }

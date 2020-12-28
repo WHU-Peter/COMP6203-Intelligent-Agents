@@ -2,10 +2,8 @@ package group24.opponentmodel.core.impl;
 
 import genius.core.Bid;
 import genius.core.Domain;
-import genius.core.issue.Issue;
-import genius.core.issue.IssueDiscrete;
-import genius.core.issue.Value;
-import genius.core.issue.ValueDiscrete;
+import genius.core.issue.*;
+import genius.core.utility.Evaluator;
 import genius.core.utility.EvaluatorDiscrete;
 import group24.opponentmodel.core.OpponentModel;
 
@@ -72,13 +70,24 @@ public class JonnyBlackOpponentModel extends OpponentModel {
             double weight = 0;
             for (int i = 0; i < entrySortedList.size(); i++) {
                 Map.Entry<Value, Integer> entry = entrySortedList.get(i);
-                weight += Math.pow(entry.getValue()/totalCounts, 2);
-                int optionWeight = (entrySortedList.size() - i)/entrySortedList.size();
-                evaluator.setEvaluation(entry.getKey(), optionWeight);
+                weight += Math.pow(entry.getValue()/(double)totalCounts, 2);
+                double optionWeight = (entrySortedList.size() - i)/(double)entrySortedList.size();
+                evaluator.setEvaluationDouble((ValueDiscrete)entry.getKey(), optionWeight);
             }
 
             evaluator.setWeight(weight);
             additiveUtilitySpace.addEvaluator(issue, evaluator);
+        }
+
+        double weightSum = 0;
+        for (Map.Entry<Objective, Evaluator> fEvaluator : additiveUtilitySpace.getfEvaluators().entrySet()) {
+            weightSum += fEvaluator.getValue().getWeight();
+        }
+
+        if (weightSum != 0) {
+            for (Map.Entry<Objective, Evaluator> fEvaluator : additiveUtilitySpace.getfEvaluators().entrySet()) {
+                fEvaluator.getValue().setWeight(fEvaluator.getValue().getWeight() / weightSum);
+            }
         }
     }
 }
