@@ -23,7 +23,7 @@ public abstract class CourseworkNegotiationParty extends AbstractNegotiationPart
     // parameters
     protected double Minimum_Offer_Threshold = 0.6;
     protected double Agreement_Value = 0.8;
-    protected double Care_Value = 0.4;
+    protected double Care_Value = 0.6;
     protected int Number_of_Bids = 5;
     protected double Reluctance = 3.0;
 

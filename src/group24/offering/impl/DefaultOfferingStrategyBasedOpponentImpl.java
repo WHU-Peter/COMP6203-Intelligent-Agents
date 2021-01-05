@@ -46,10 +46,9 @@ public class DefaultOfferingStrategyBasedOpponentImpl extends OfferingStrategy {
                         && opponentModelInterface.predict(bid, opponentModelInterface.getOpponent(realOpponentIndex)) >= agent.getCare_Value())) {
                     lastBid = i;
                     agentToFavor++;
-                    if (agent.hasPreferenceUncertainty() && agent.getUserModel() instanceof ExperimentalUserModel) {
-                        System.out.println("realUSpace : " + agent.getRealUSpace().getUtility(bid));
-                        System.out.println("estimation : " + agent.getUtility(bid));
-                    }
+                    System.out.println("bid offer, self utility : " + agent.getUtility(bid));
+                    System.out.println("bid offer, opponent utility : " + opponentModelInterface.predict(bid));
+                    System.out.println();
                     return new Offer(agent.getPartyId(), bid);
                 }
             } catch (IllegalAccessException e) {
@@ -60,10 +59,10 @@ public class DefaultOfferingStrategyBasedOpponentImpl extends OfferingStrategy {
 
         agentToFavor++;
         lastBid = 0;
-        if (agent.hasPreferenceUncertainty() && agent.getUserModel() instanceof ExperimentalUserModel) {
-            System.out.println("realUSpace : " + agent.getRealUSpace().getUtility(feasibleBids.get(0).getBid()));
-            System.out.println("estimation : " + agent.getUtility(feasibleBids.get(0).getBid()));
-        }
+
+        System.out.println("bid offer, self utility : " + agent.getUtility(feasibleBids.get(0).getBid()));
+        System.out.println("bid offer, opponent utility : " + opponentModelInterface.predict(feasibleBids.get(0).getBid()));
+        System.out.println();
         return new Offer(agent.getPartyId(), feasibleBids.get(0).getBid());
     }
 }

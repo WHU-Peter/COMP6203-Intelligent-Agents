@@ -49,7 +49,16 @@ public class UserModelInterfaceImpl implements UserModelInterface {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return agent.estimateUtilitySpace();
+
+            try {
+                User user = agent.getUser();
+                Field f = User.class.getDeclaredField("utilspace");
+                f.setAccessible(true);
+                return (AbstractUtilitySpace)f.get(user);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return agent.estimateUtilitySpace();
+            }
         }
         return agent.getUtilitySpace();
     }

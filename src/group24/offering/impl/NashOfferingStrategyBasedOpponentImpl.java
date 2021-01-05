@@ -18,6 +18,11 @@ public class NashOfferingStrategyBasedOpponentImpl extends OfferingStrategy {
 
     private CourseworkNegotiationParty agent;
     private List<BidDetails> feasibleBids;
+    private BidDetails finalNash;
+
+    public BidDetails getFinalNash() {
+        return finalNash;
+    }
 
     private int lastBid;
     private int agentToFavor;
@@ -72,37 +77,49 @@ public class NashOfferingStrategyBasedOpponentImpl extends OfferingStrategy {
             return new Offer(agent.getPartyId(), feasibleBids.get(0).getBid());
         }else {
 
-            Bid nashPoint = feasibleBids.get(0).getBid();
-            List<Bid> possibleBidDetails = new ArrayList<>();
+            BidDetails nashPoint = null;
+            List<BidDetails> possibleBidDetails = new ArrayList<>();
 
             for (BidDetails bidDetails : feasibleBids) {
-                if (agent.getUtility(bidDetails.getBid()) >= agent.getAgreement_Value()
+                if (bidDetails.getMyUndiscountedUtil() >= agent.getAgreement_Value()
                         && opponentModelInterface.predict(bidDetails.getBid()) >= agent.getCare_Value()) {
-                    possibleBidDetails.add(bidDetails.getBid());
+                    possibleBidDetails.add(bidDetails);
+
+                    System.out.println("nashPoint : " + (null != nashPoint ? calculateNash(nashPoint.getBid(), opponentModelInterface.calculateNash(nashPoint.getBid())): null));
+                    System.out.println("bidDetails.getBid() : " + calculateNash(bidDetails.getBid(), opponentModelInterface.calculateNash(bidDetails.getBid())));
 
                     if (null == nashPoint
-                            || calculateNash(nashPoint, opponentModelInterface.calculateNash(nashPoint)) < calculateNash(bidDetails.getBid(), opponentModelInterface.calculateNash(bidDetails.getBid()))) {
-                        nashPoint = bidDetails.getBid();
+                            || calculateNash(nashPoint.getBid(), opponentModelInterface.calculateNash(nashPoint.getBid())) < calculateNash(bidDetails.getBid(), opponentModelInterface.calculateNash(bidDetails.getBid()))) {
+                        nashPoint = bidDetails;
                     }
                 }
             }
 
-            final Bid finalNash = nashPoint;
+            if (null == nashPoint) {
+                nashPoint = feasibleBids.get(0);
+            }
+            finalNash = nashPoint;
+            System.out.println("finalNash : " + agent.getUtility(nashPoint.getBid()) + "  ,   " + opponentModelInterface.predict(nashPoint.getBid()));
 
             if (null != possibleBidDetails && possibleBidDetails.size() > 0) {
-                Collections.sort(possibleBidDetails, new Comparator<Bid>() {
+                Collections.sort(possibleBidDetails, new Comparator<BidDetails>() {
                     @Override
-                    public int compare(Bid o1, Bid o2) {
-                        return Double.compare(Math.sqrt(calculateDistanceNash(o1, finalNash) + opponentModelInterface.calculateDistanceNash(o1, finalNash)), Math.sqrt(calculateDistanceNash(o2, finalNash) + opponentModelInterface.calculateDistanceNash(o2, finalNash)));
+                    public int compare(BidDetails o1, BidDetails o2) {
+                        return Double.compare(calculateScores(o2, finalNash.getBid(), opponentModelInterface),calculateScores(o1, finalNash.getBid(), opponentModelInterface));
                     }
                 });
 
-                List<Bid> nashBidDetails = possibleBidDetails.subList(0, possibleBidDetails.size() < 20 ? possibleBidDetails.size() : 20);
-                return new Offer(agent.getPartyId(), nashBidDetails.get(agent.getRandom().nextInt(nashBidDetails.size())));
+                List<BidDetails> nashBidDetails = possibleBidDetails.subList(0, possibleBidDetails.size() < 5 ? possibleBidDetails.size() : 5);
+                return new Offer(agent.getPartyId(), nashBidDetails.get(agent.getRandom().nextInt(nashBidDetails.size())).getBid());
             }
 
-            return new Offer(agent.getPartyId(), nashPoint);
+            return new Offer(agent.getPartyId(), nashPoint.getBid());
         }
+    }
+
+    private double calculateScores(BidDetails o, Bid finalNash, OpponentModelInterface opponentModelInterface) {
+
+        return (1 - Math.sqrt(calculateDistanceNash(o.getBid(), finalNash) + opponentModelInterface.calculateDistanceNash(o.getBid(), finalNash))) * agent.getUtility(o.getBid());
     }
 
     private double calculateNash(Bid bid, double opponentUtilities) {

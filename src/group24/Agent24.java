@@ -83,8 +83,8 @@ public class Agent24 extends CourseworkNegotiationParty {
 
                 // care_value increase 4% every ten rounds
                 Care_Value = Care_Value * (1 + 0.04);
-                if (Care_Value > 0.7) {
-                    Care_Value = 0.7;
+                if (Care_Value > 0.72) {
+                    Care_Value = 0.72;
                 }
 
                 // reluctance decrease 4% every ten rounds
@@ -105,8 +105,8 @@ public class Agent24 extends CourseworkNegotiationParty {
                     Agreement_Value = 0.85;
                 }
 
-                if (Agreement_Value < Minimum_Offer_Threshold * (2 - timeline.getTime())) {
-                    Agreement_Value = Minimum_Offer_Threshold * (2 - timeline.getTime());
+                if (Agreement_Value < Minimum_Offer_Threshold * (3 - Math.pow(2, timeline.getTime()))) {
+                    Agreement_Value = Minimum_Offer_Threshold * (3 - Math.pow(2, timeline.getTime()));
                 }
             }
         }
