@@ -10,6 +10,7 @@ import group24.CourseworkNegotiationParty;
 import group24.usermodel.UserModelInterface;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
 
 public class UserModelInterfaceImpl implements UserModelInterface {
@@ -34,22 +35,6 @@ public class UserModelInterfaceImpl implements UserModelInterface {
                 realUSpace = e.getRealUtilitySpace();
             }
 
-            OutcomeSpace outcomeSpace = new OutcomeSpace(agent.getUtilitySpace());
-            List<BidDetails> allOutcomes = outcomeSpace.getAllOutcomes();
-
-            for (BidDetails bid : allOutcomes) {
-                agent.setUserModel(agent.getUser().elicitRank(bid.getBid(), agent.getUserModel()));
-            }
-
-            try {
-                User user = agent.getUser();
-                Field f = User.class.getDeclaredField("elicitationBother");
-                f.setAccessible(true);
-                f.set(user, 0);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
             try {
                 User user = agent.getUser();
                 Field f = User.class.getDeclaredField("utilspace");
@@ -57,6 +42,28 @@ public class UserModelInterfaceImpl implements UserModelInterface {
                 return (AbstractUtilitySpace)f.get(user);
             } catch (Exception e) {
                 e.printStackTrace();
+
+                OutcomeSpace outcomeSpace = new OutcomeSpace(agent.getUtilitySpace());
+                List<BidDetails> allOutcomes = outcomeSpace.getAllOutcomes();
+
+                if (allOutcomes.size() > 10000) {
+                    Collections.shuffle(allOutcomes);
+                    allOutcomes = allOutcomes.subList(0, 10000);
+                }
+
+                for (BidDetails bid : allOutcomes) {
+                    agent.setUserModel(agent.getUser().elicitRank(bid.getBid(), agent.getUserModel()));
+                }
+
+                try {
+                    User user = agent.getUser();
+                    Field f = User.class.getDeclaredField("elicitationBother");
+                    f.setAccessible(true);
+                    f.set(user, 0);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
                 return agent.estimateUtilitySpace();
             }
         }

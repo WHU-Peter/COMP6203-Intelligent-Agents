@@ -1,4 +1,4 @@
-<utility_space> 
+<utility_space type="UNCERTAIN">
 <objective index="0" description="" name="Wholesaler" type="objective" etype="objective"> 
 <issue index="1" name="Bread type" vtype="discrete" type="discrete" etype="discrete"> 
 <item index="1" value="Baguette" evaluation="10"> 
